@@ -1,4 +1,4 @@
-package main
+package evedt
 
 import (
 	"github.com/gorilla/mux"

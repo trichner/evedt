@@ -1,4 +1,4 @@
-package main
+package evedt
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	_ "github.com/gorilla/mux"
+	"github.com/trichner/evedt/tracker"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -13,9 +14,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func DonationsIndex(w http.ResponseWriter, r *http.Request) {
-	donations := Donations{
-		Donation{CharacterName: "Thomion", CharacterID: 123},
-		Donation{CharacterName: "Chaos", CharacterID: 93},
+	donations := tracker.Donations{
+		tracker.Donation{CharacterName: "Thomion", CharacterID: 123},
+		tracker.Donation{CharacterName: "Chaos", CharacterID: 93},
 	}
 	appendJson(w, donations)
 	w.WriteHeader(http.StatusOK)
