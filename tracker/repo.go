@@ -12,7 +12,7 @@ type Repo struct {
 }
 
 func (r *Repo) Open() error {
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", "evedt.db")
 	if err != nil {
 		return err
 	}
