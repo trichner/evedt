@@ -24,6 +24,12 @@ var routes = Routes{
 		"/donations",
 		DonationsIndex,
 	},
+	Route{
+		"DonationsTop",
+		"GET",
+		"/donations/top",
+		DonationsTop,
+	},
 	// Route{
 	// 	"TodoShow",
 	// 	"GET",

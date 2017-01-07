@@ -4,8 +4,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewRouter() *mux.Router {
+func NewRouter(prefix string) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
+
+	if len(prefix) > 0 {
+		router = router.PathPrefix(prefix).Subrouter()
+	}
+
 	for _, route := range routes {
 		// decorate with logger
 		handler := Logger(route.HandlerFunc, route.Name)

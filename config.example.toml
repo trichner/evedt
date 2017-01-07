@@ -2,3 +2,6 @@
 [eveapi]
 api-key = "1234567"
 verification-code = "somevalidverificationcode"
+
+[server]
+port = "8080"

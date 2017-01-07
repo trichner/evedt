@@ -15,9 +15,16 @@ type ReplicatorConfig struct {
 	Interval int `toml:"interval"`
 }
 
+type ServerConfig struct {
+	Port   string `toml:"port"`
+	Prefix string `toml:"prefix"`
+}
+
+// Config
 type Config struct {
 	ApiCredentials ApiCredentials   `toml:"eveapi"`
 	Replicator     ReplicatorConfig `toml:"replicator"`
+	ServerConfig   ServerConfig     `toml:"server"`
 }
 
 func decodeConfig(tml string) (*Config, error) {
@@ -30,6 +37,7 @@ func decodeConfig(tml string) (*Config, error) {
 	return conf, nil
 }
 
+// LoadConfig loads and parses the specified config file
 func LoadConfig(filename string) (*Config, error) {
 	bytes, err := ioutil.ReadFile(filename)
 	if err != nil {

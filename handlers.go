@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	_ "github.com/gorilla/mux"
-	"github.com/trichner/evedt/tracker"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -14,44 +13,24 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func DonationsIndex(w http.ResponseWriter, r *http.Request) {
-	donations := tracker.Donations{
-		tracker.Donation{CharacterName: "Thomion", CharacterID: 123},
-		tracker.Donation{CharacterName: "Chaos", CharacterID: 93},
-	}
+
+	limit := 20
+	days := 20
+	donations := repo.FindDonations(limit, days)
+
 	appendJson(w, donations)
 	w.WriteHeader(http.StatusOK)
 }
 
-// func TodoShow(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	todoId := vars["todoId"]
-// 	fmt.Fprintln(w, "Todo show:", todoId)
-// }
+func DonationsTop(w http.ResponseWriter, r *http.Request) {
 
-// func TodoCreate(w http.ResponseWriter, r *http.Request) {
-// 	var todo Todo
-// 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	if err := r.Body.Close(); err != nil {
-// 		panic(err)
-// 	}
-// 	if err := json.Unmarshal(body, &todo); err != nil {
-// 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-// 		w.WriteHeader(422) // unprocessable entity
-// 		if err := json.NewEncoder(w).Encode(err); err != nil {
-// 			panic(err)
-// 		}
-// 	}
+	limit := 20
+	days := 20
+	donations := repo.FindTopDonations(limit, days)
 
-// 	t := todo //RepoCreateTodo(todo)
-// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-// 	w.WriteHeader(http.StatusCreated)
-// 	if err := json.NewEncoder(w).Encode(t); err != nil {
-// 		panic(err)
-// 	}
-// }
+	appendJson(w, donations)
+	w.WriteHeader(http.StatusOK)
+}
 
 func appendJson(w http.ResponseWriter, r interface{}) error {
 

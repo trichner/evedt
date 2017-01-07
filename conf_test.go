@@ -10,7 +10,7 @@ func TestLoadConf(t *testing.T) {
 
 	Convey("Should load conf", t, func() {
 
-		config, err := LoadConfig("fixtures/config.toml")
+		config, err := LoadConfig("fixtures/config.test.toml")
 		So(err, ShouldBeNil)
 
 		So(config.ApiCredentials.ApiKey, ShouldEqual, "1234567")
