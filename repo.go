@@ -1,8 +1,6 @@
 package main
 
 import (
-	"time"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
@@ -44,17 +42,25 @@ func (r *Repo) Close() {
 // 	db.Delete(&product)
 // }
 
-func (r *Repo) CreateDonation(refId int64, characterName string, characterID int64, date time.Time, amount float64) *Donation {
+func (r *Repo) StoreDonation(donation *Donation) {
+	r.db.Create(donation)
+}
 
-	d := Donation{
-		RefID:         refId,
-		CharacterName: characterName,
-		CharacterID:   characterID,
-		Date:          date,
-		Amount:        amount,
+func (r *Repo) LastDonation() *Donation {
+	donations := make([]Donation, 1)
+
+	r.db.Limit(1).Order("ref_id desc").Find(&donations)
+	if len(donations) == 0 {
+		return nil
 	}
+	return &donations[0]
+}
 
-	r.db.Create(&d)
+func (r *Repo) FindDonations(limit int) Donations {
 
-	return &d
+	donations := make([]Donation, limit)
+
+	r.db.Limit(limit).Order("ref_id desc").Find(&donations)
+
+	return donations
 }

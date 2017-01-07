@@ -1,9 +1,11 @@
 package main
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
+	"fmt"
 	"testing"
 	"time"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestRepoOpen(t *testing.T) {
@@ -15,10 +17,34 @@ func TestRepoOpen(t *testing.T) {
 		So(err, ShouldBeNil)
 		defer repo.Close()
 
-		now := time.Now()
-		_ = now
-		repo.CreateDonation(7734553, "Thomion", 1234, time.Now(), 882232.44)
-		So(err, ShouldBeNil)
+		Convey("Should store donations", func() {
+
+			now := time.Now()
+			_ = now
+			repo.StoreDonation(&Donation{
+				CharacterID:   7734553,
+				CharacterName: "Thomion",
+				RefID:         1234,
+				Date:          time.Now(),
+				Amount:        882232.44,
+			})
+			So(err, ShouldBeNil)
+
+			last := repo.LastDonation()
+			So(last, ShouldNotBeNil)
+
+			So(last.RefID, ShouldEqual, 1234)
+		})
+
+		Convey("Should find donations", func() {
+			donations := repo.FindDonations(1000)
+
+			fmt.Println()
+			for _, d := range donations {
+				fmt.Println(d)
+			}
+		})
 
 	})
+
 }
