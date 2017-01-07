@@ -11,8 +11,13 @@ type ApiCredentials struct {
 	VCode  string `toml:"verification-code"`
 }
 
+type ReplicatorConfig struct {
+	Interval int `toml:"interval"`
+}
+
 type Config struct {
-	ApiCredentials ApiCredentials `toml:"api-credentials"`
+	ApiCredentials ApiCredentials   `toml:"eveapi"`
+	Replicator     ReplicatorConfig `toml:"replicator"`
 }
 
 func decodeConfig(tml string) (*Config, error) {
