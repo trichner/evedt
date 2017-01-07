@@ -1,3 +1,9 @@
+
+# binary
 evedt
+
+# sqlite db
 *.db
-conf.toml
+
+# config file, contains credentials
+config.toml
