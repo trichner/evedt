@@ -28,7 +28,6 @@ func DonationsIndex(w http.ResponseWriter, r *http.Request) {
 
 	donations := repo.FindDonations(limit, days)
 
-	w.WriteHeader(http.StatusOK)
 	appendJson(w, donations)
 }
 
@@ -49,7 +48,6 @@ func DonationsTop(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Days: %d\n", days)
 	donations := repo.FindTopDonations(limit, days)
 
-	w.WriteHeader(http.StatusOK)
 	appendJson(w, donations)
 }
 
