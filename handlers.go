@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	_ "github.com/gorilla/mux"
+	"strconv"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -13,23 +12,45 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func DonationsIndex(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	limit := 100
+	days := 30
 
-	limit := 20
-	days := 20
+	limits := params["limit"]
+	if len(limits) == 1 {
+		limit, _ = strconv.Atoi(limits[0])
+	}
+
+	daysStr := params["days"]
+	if len(daysStr) == 1 {
+		days, _ = strconv.Atoi(daysStr[0])
+	}
+
 	donations := repo.FindDonations(limit, days)
 
-	appendJson(w, donations)
 	w.WriteHeader(http.StatusOK)
+	appendJson(w, donations)
 }
 
 func DonationsTop(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	limit := 100
+	days := 30
 
-	limit := 20
-	days := 20
+	limits := params["limit"]
+	if len(limits) == 1 {
+		limit, _ = strconv.Atoi(limits[0])
+	}
+
+	daysStr := params["days"]
+	if len(daysStr) == 1 {
+		days, _ = strconv.Atoi(daysStr[0])
+	}
+	fmt.Printf("Days: %d\n", days)
 	donations := repo.FindTopDonations(limit, days)
 
-	appendJson(w, donations)
 	w.WriteHeader(http.StatusOK)
+	appendJson(w, donations)
 }
 
 func appendJson(w http.ResponseWriter, r interface{}) error {
