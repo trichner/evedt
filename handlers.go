@@ -56,7 +56,3 @@ func appendJson(w http.ResponseWriter, r interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	return json.NewEncoder(w).Encode(r)
 }
-
-// func (api *API) abort(rw http.ResponseWriter, statusCode int) {
-// 	rw.WriteHeader(rw)
-// }

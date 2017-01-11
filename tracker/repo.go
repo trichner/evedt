@@ -7,11 +7,25 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-type Repo struct {
+// Repo stores all
+type Repo interface {
+	Open() error
+	Close() error
+	StoreDonation(donation *Donation) error
+	LastDonation() *Donation
+	FindDonations(limit int, days int) Donations
+	FindTopDonations(limit int, days int) Donations
+}
+
+type gormRepo struct {
 	db *gorm.DB
 }
 
-func (r *Repo) Open() error {
+func NewRepo() Repo {
+	return &gormRepo{}
+}
+
+func (r *gormRepo) Open() error {
 	db, err := gorm.Open("sqlite3", "evedt.db")
 	if err != nil {
 		return err
@@ -23,15 +37,15 @@ func (r *Repo) Open() error {
 	return nil
 }
 
-func (r *Repo) Close() {
-	r.db.Close()
+func (r *gormRepo) Close() error {
+	return r.db.Close()
 }
 
-func (r *Repo) StoreDonation(donation *Donation) {
-	r.db.Create(donation)
+func (r *gormRepo) StoreDonation(donation *Donation) error {
+	return r.db.Create(donation).Error
 }
 
-func (r *Repo) LastDonation() *Donation {
+func (r *gormRepo) LastDonation() *Donation {
 	donations := make([]Donation, 1)
 
 	r.db.Limit(1).Order("ref_id desc").Find(&donations)
@@ -41,7 +55,7 @@ func (r *Repo) LastDonation() *Donation {
 	return &donations[0]
 }
 
-func (r *Repo) FindDonations(limit int, days int) Donations {
+func (r *gormRepo) FindDonations(limit int, days int) Donations {
 
 	db := r.prepareFindDonations(limit, days)
 
@@ -51,7 +65,7 @@ func (r *Repo) FindDonations(limit int, days int) Donations {
 	return donations
 }
 
-func (r *Repo) FindTopDonations(limit int, days int) Donations {
+func (r *gormRepo) FindTopDonations(limit int, days int) Donations {
 
 	db := r.prepareFindDonations(limit, days)
 
@@ -61,7 +75,7 @@ func (r *Repo) FindTopDonations(limit int, days int) Donations {
 	return donations
 }
 
-func (r *Repo) prepareFindDonations(limit int, days int) *gorm.DB {
+func (r *gormRepo) prepareFindDonations(limit int, days int) *gorm.DB {
 
 	if limit <= 0 || limit > 1000 {
 		limit = 1000

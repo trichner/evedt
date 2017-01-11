@@ -9,7 +9,7 @@ import (
 )
 
 func TestRepoOpen(t *testing.T) {
-	repo := Repo{}
+	repo := NewRepo()
 
 	Convey("Should open db", t, func() {
 

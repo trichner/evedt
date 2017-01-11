@@ -7,7 +7,7 @@ import (
 )
 
 func TestReplicatorReplicate(t *testing.T) {
-	repo := Repo{}
+	repo := NewRepo()
 
 	Convey("Should Replicate", t, func() {
 
@@ -18,7 +18,7 @@ func TestReplicatorReplicate(t *testing.T) {
 		config, err := LoadConfig("config.toml")
 
 		replicator := Replicator{}
-		replicator.Init(&repo, config.ApiCredentials.ApiKey, config.ApiCredentials.VCode, 1000)
+		replicator.Init(repo, config.ApiCredentials.ApiKey, config.ApiCredentials.VCode, 1000)
 
 		err = replicator.Run()
 

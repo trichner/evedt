@@ -7,16 +7,20 @@ import (
 )
 
 const (
+	// Limit of WalletJournal entries to fetch at once
 	fetchChunkSize = 50
 )
 
+// Replicator represents a service that will fetch the WalletJournal periodically and
+// store the new entries into the repo
 type Replicator struct {
 	api        *eveapi.API
-	repo       *Repo
+	repo       Repo
 	accountKey int64
 }
 
-func (r *Replicator) Init(repo *Repo, apiKey string, apiVCode string, accountKey int64) {
+// Init initializes a replicator with the appropriate configuration
+func (r *Replicator) Init(repo Repo, apiKey string, apiVCode string, accountKey int64) {
 
 	r.accountKey = accountKey
 	r.repo = repo
@@ -31,6 +35,8 @@ func (r *Replicator) Init(repo *Repo, apiKey string, apiVCode string, accountKey
 
 }
 
+// Run executes the replicator for once, this fetches all new WalletJournal entries
+// and stores them locally
 func (r *Replicator) Run() error {
 
 	last := r.repo.LastDonation()
@@ -39,8 +45,7 @@ func (r *Replicator) Run() error {
 Loop:
 	for {
 
-		log.Println()
-		log.Printf("Fetching wallet from %d\n", fromRefID)
+		log.Printf("Fetching wallet from refID: %d\n", fromRefID)
 		walletJournal, err := r.api.CorpWalletJournal(r.accountKey, fromRefID, fetchChunkSize)
 		if err != nil {
 			return err

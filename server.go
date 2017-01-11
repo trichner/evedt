@@ -9,17 +9,17 @@ import (
 )
 
 var (
-	repo *tracker.Repo
+	repo tracker.Repo
 )
 
 func Run() {
 
 	config, err := LoadConfig("config.toml")
 	if err != nil {
-		log.Fatalf("Cannot read config file: %s", err)
+		log.Fatalf("Cannot read config file: %s\n Is 'config.toml' existing?", err)
 	}
 
-	repo = &tracker.Repo{}
+	repo = tracker.NewRepo()
 	if err := repo.Open(); err != nil {
 		log.Fatalf("Cannot open DB: %s", err)
 	}

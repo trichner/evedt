@@ -30,16 +30,4 @@ var routes = Routes{
 		"/donations/top",
 		DonationsTop,
 	},
-	// Route{
-	// 	"TodoShow",
-	// 	"GET",
-	// 	"/todos/{todoId}",
-	// 	TodoShow,
-	// },
-	// Route{
-	// 	"TodoCreate",
-	// 	"POST",
-	// 	"/todos",
-	// 	TodoCreate,
-	// },
 }

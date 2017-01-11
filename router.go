@@ -4,6 +4,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Creates a new router under the specified prefix
+// and registers all routes
 func NewRouter(prefix string) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 

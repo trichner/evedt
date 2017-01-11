@@ -20,13 +20,14 @@ type ServerConfig struct {
 	Prefix string `toml:"prefix"`
 }
 
-// Config
+// Config struct holds the content of the configuration file
 type Config struct {
 	ApiCredentials ApiCredentials   `toml:"eveapi"`
 	Replicator     ReplicatorConfig `toml:"replicator"`
 	ServerConfig   ServerConfig     `toml:"server"`
 }
 
+// decodeConfig parses a string into it's struct representation
 func decodeConfig(tml string) (*Config, error) {
 
 	conf := &Config{}
