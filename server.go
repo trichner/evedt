@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/trichner/evedt/tracker"
+	"github.com/rs/cors"
 )
 
 const (
@@ -48,8 +49,11 @@ func Start() error {
 	prefix := config.ServerConfig.Prefix
 	router := NewRouter(prefix, &replicator)
 
+	// enable CORS
+	handler := cors.Default().Handler(router)
+
 	port := config.ServerConfig.Port
 	log.Printf("Docking at :%s%s\n", port, prefix)
 
-	return http.ListenAndServe(":"+port, router)
+	return http.ListenAndServe(":"+port, handler)
 }
