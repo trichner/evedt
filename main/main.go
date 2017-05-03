@@ -6,5 +6,6 @@ import (
 )
 
 func main() {
+	//TODO should pass config here instead of magic in evedt package
 	log.Fatal(evedt.Start())
 }
