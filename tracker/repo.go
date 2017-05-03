@@ -21,7 +21,7 @@ type gormRepo struct {
 	db *gorm.DB
 }
 
-func NewRepo() Repo {
+func NewSqliteRepo() Repo {
 	return &gormRepo{}
 }
 

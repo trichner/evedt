@@ -6,22 +6,23 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+const (
+	apiKey = "1234567"
+	vcode  = "somevalidverificationcode"
+)
+
 func TestReplicatorReplicate(t *testing.T) {
-	repo := NewRepo()
+	repo := NewSqliteRepo()
 
 	Convey("Should Replicate", t, func() {
 
-		err := repo.Open()
+		replicator, err := NewReplicator(SqlRepo, ApiCredentials(apiKey, vcode), AccountKey(123456))
 		So(err, ShouldBeNil)
-		defer repo.Close()
-
-		config, err := LoadConfig("config.toml")
-
-		replicator := Replicator{}
-		replicator.Init(repo, config.ApiCredentials.ApiKey, config.ApiCredentials.VCode, 1000)
 
 		err = replicator.Run()
+		So(err, ShouldBeNil)
 
+		err = replicator.Close()
 		So(err, ShouldBeNil)
 
 	})

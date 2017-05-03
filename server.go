@@ -8,44 +8,48 @@ import (
 	"github.com/trichner/evedt/tracker"
 )
 
-var (
-	repo tracker.Repo
+const (
+	confFile = "config.toml"
 )
 
-func Run() {
+func Start() error {
 
-	config, err := LoadConfig("config.toml")
+	config, err := loadConfig(confFile)
 	if err != nil {
-		log.Fatalf("Cannot read config file: %s\n Is 'config.toml' existing?", err)
+		return err
 	}
-
-	repo = tracker.NewRepo()
-	if err := repo.Open(); err != nil {
-		log.Fatalf("Cannot open DB: %s", err)
-	}
-	defer repo.Close()
 
 	// init replicator
-	replicator := tracker.Replicator{}
-	replicator.Init(repo, config.ApiCredentials.ApiKey, config.ApiCredentials.VCode, 1000)
+	apiKey := config.ApiCredentials.ApiKey
+	vCode := config.ApiCredentials.VCode
+	replicator, err := tracker.NewReplicator(tracker.ApiCredentials(apiKey, vCode))
 
 	// schedule replicator. Note: This runs forever
-	ticker := time.NewTicker(15 * time.Minute)
+	quit := make(chan struct{})
 	go func() {
+
+		ticker := time.NewTicker(15 * time.Minute)
 		for {
 			if err := replicator.Run(); err != nil {
 				log.Printf("Eve API failed: %s\n", err)
 			}
-			<-ticker.C
+
+			select {
+			case <-quit:
+				ticker.Stop()
+				return
+			case <-ticker.C:
+				break;
+			}
 		}
 	}()
 
 	// setup and start our REST api
 	prefix := config.ServerConfig.Prefix
-	router := NewRouter(prefix)
+	router := NewRouter(prefix, &replicator)
 
 	port := config.ServerConfig.Port
-	log.Printf("Docking at localhost:%s%s\n", port, prefix)
+	log.Printf("Docking at :%s%s\n", port, prefix)
 
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	return http.ListenAndServe(":"+port, router)
 }

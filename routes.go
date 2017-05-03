@@ -1,12 +1,15 @@
 package evedt
 
-import "net/http"
+import (
+	"net/http"
+	"github.com/trichner/evedt/tracker"
+)
 
 type Route struct {
 	Name        string
 	Method      string
 	Pattern     string
-	HandlerFunc http.HandlerFunc
+	NewHandler func (r *tracker.Replicator) http.HandlerFunc
 }
 
 type Routes []Route

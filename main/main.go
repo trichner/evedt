@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/trichner/evedt"
+	"log"
 )
 
 func main() {
-	evedt.Run()
+	log.Fatal(evedt.Start())
 }

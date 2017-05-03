@@ -1,10 +1,6 @@
 package evedt
 
-import (
-	"io/ioutil"
-
-	"github.com/BurntSushi/toml"
-)
+import tconf "github.com/trichner/evedt/tconf"
 
 type ApiCredentials struct {
 	ApiKey string `toml:"api-key"`
@@ -27,28 +23,9 @@ type Config struct {
 	ServerConfig   ServerConfig     `toml:"server"`
 }
 
-// decodeConfig parses a string into it's struct representation
-func decodeConfig(tml string) (*Config, error) {
+func loadConfig(filename string) (*Config, error) {
 
 	conf := &Config{}
-	if _, err := toml.Decode(tml, conf); err != nil {
-		return nil, err
-	}
-
-	return conf, nil
-}
-
-// LoadConfig loads and parses the specified config file
-func LoadConfig(filename string) (*Config, error) {
-	bytes, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	str := string(bytes)
-	conf, err := decodeConfig(str)
-	if err != nil {
-		return nil, err
-	}
-	return conf, nil
+	err := tconf.LoadConfig(filename, conf)
+	return conf, err
 }

@@ -7,3 +7,5 @@ evedt
 
 # config file, contains credentials
 config.toml
+
+.idea/
