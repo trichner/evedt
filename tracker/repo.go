@@ -7,6 +7,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
+const revTypeIdDonation = 10
+
 // Repo stores all
 type Repo interface {
 	Open() error
@@ -89,7 +91,7 @@ func (r *gormRepo) prepareFindDonations(limit int, days int) *gorm.DB {
 	}
 
 	firstDay := time.Now().Add(-(time.Hour * 24 * time.Duration(limitDays)))
-	db = db.Where("date >= ?", firstDay)
+	db = db.Where("date >= ? AND ref_type_id = ?", firstDay, revTypeIdDonation)
 
 	return db
 }
