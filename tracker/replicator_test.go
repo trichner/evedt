@@ -12,7 +12,6 @@ const (
 )
 
 func TestReplicatorReplicate(t *testing.T) {
-	repo := NewSqliteRepo()
 
 	Convey("Should Replicate", t, func() {
 

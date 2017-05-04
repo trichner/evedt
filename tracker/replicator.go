@@ -4,6 +4,9 @@ import (
 	"log"
 
 	"github.com/trichner/eveapi"
+	"strings"
+	"os"
+	"encoding/json"
 )
 
 const (
@@ -78,6 +81,13 @@ func NewReplicator(conf ...ReplicatorConfig) (Replicator, error) {
 // and stores them locally
 func (r *Replicator) Run() error {
 
+	f, err := os.OpenFile("corp-wallet-journal.json", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer f.Close()
+
 	last := r.repo.LastDonation()
 
 	fromRefID := int64(0)
@@ -91,6 +101,7 @@ again:
 		}
 
 		txs := walletJournal.Transactions
+		log.Printf("Received %d transactions.\n", len(txs))
 
 		// No more transactions?
 		if len(txs) == 0 {
@@ -104,16 +115,32 @@ again:
 				break again
 			}
 
-			if t.RefTypeID == 10 { // Player donation
-				d := Donation{
-					CharacterID:   t.OwnerID1,
-					CharacterName: t.OwnerName1,
-					RefID:         t.RefID,
-					Amount:        t.Amount,
-					Date:          t.TransactionDateTime.Time,
-				}
-				log.Printf("Storing transaction from %s, txId:%s\n", d.CharacterName, d.RefID)
-				r.repo.StoreDonation(&d)
+			reason := t.Reason
+			if t.RefTypeID == 10 || t.RefTypeID == 37 { // Player donation
+				reason = strings.TrimPrefix(reason, "DESC: ")
+			}
+			d := Donation{
+				CharacterID:   t.OwnerID1,
+				CharacterName: t.OwnerName1,
+				RefID:         t.RefID,
+				RefTypeID:     t.RefTypeID,
+				Amount:        t.Amount,
+				Date:          t.TransactionDateTime.Time,
+				Reason:        reason,
+			}
+			log.Printf("Nex TX (%s) refTypeId:%v, txId:%v: %s\n", d.CharacterName, d.RefTypeID, d.RefID, d.Reason)
+			r.repo.StoreDonation(&d)
+
+			// also log the entire transaction to a file
+			bytes, err := json.Marshal(&t)
+			if err != nil {
+				continue;
+			}
+
+			line := string(bytes) + "\n"
+			_, err = f.WriteString(line)
+			if err != nil {
+				log.Print(err)
 			}
 		}
 
